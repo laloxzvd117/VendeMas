@@ -7,11 +7,11 @@ Construida con Flutter + Node.js + PostgreSQL, arquitectura Clean Architecture.
 
 ## Plataformas
 
-| Plataforma | Vista | Estado |
-|---|---|---|
-| Android / iOS | Vender, productos, inicio, reportes móvil | 🚧 En desarrollo |
-| Linux / Windows / macOS | Solo reportes (consulta, solo lectura) | ✅ Funcional |
-| Web (Chrome) | Vista móvil para desarrollo | ✅ Funcional |
+| Plataforma | Vista | 
+|---|---|
+| Android / iOS | Vender, productos, inicio, reportes móvil | 
+| Linux / Windows / macOS | Solo reportes (consulta, solo lectura) |
+| Web (Chrome) | Vista móvil para desarrollo | 
 
 ---
 
