@@ -5,9 +5,7 @@ Registra ventas rápido, aun sin internet, y convierte esos datos en recomendaci
 claras: qué producto impulsar, cuál dejar de comprar y qué se está acabando.
 
 El celular es la herramienta de trabajo diario; la computadora sirve solo para
-consultar reportes. Los requerimientos completos (24 RF, 8 RNF y 24 formularios)
-están en el documento *VendeMas: requerimientos y formularios*. El plan de trabajo
-está en [ROADMAP.md](ROADMAP.md).
+consultar reportes. El plan de trabajo está en [ROADMAP.md](ROADMAP.md).
 
 ## Estado
 
@@ -75,5 +73,4 @@ Las pruebas de pantalla que tocan la base de datos dejan pasar tiempo real
 
 ## Plataformas
 
-Hoy el proyecto tiene Android, Linux y Windows. iOS se agrega con
-`flutter create --platforms=ios .` (compilar requiere una Mac).
+Hoy el proyecto tiene Android, Linux y Windows.
