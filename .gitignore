@@ -49,3 +49,7 @@ app.*.map.json
 
 # VSCode configuration files
 .vscode/
+
+# Código generado por build_runner (drift). Se regenera con:
+#   dart run build_runner build --delete-conflicting-outputs
+*.g.dart
