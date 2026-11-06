@@ -13,6 +13,8 @@ void main() {
     t.view.devicePixelRatio = 1.0;
     addTearDown(t.view.reset);
     await initializeDateFormatting('es_MX');
+    debugForceMobile = true;
+    addTearDown(() => debugForceMobile = false);
     final db = AppDatabase(NativeDatabase.memory());
     // La base usa E/S real: se deja pasar tiempo real entre pasos.
     Future<void> settle() async {
