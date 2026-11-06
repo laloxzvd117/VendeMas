@@ -2,7 +2,9 @@ import 'package:drift_flutter/drift_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'data/database.dart';
+import 'data/report_source.dart';
 import 'domain/calculations.dart';
+import 'domain/reports.dart';
 
 final databaseProvider = Provider<AppDatabase>((ref) {
   final db = AppDatabase(driftDatabase(name: 'vendemas'));
@@ -21,6 +23,10 @@ final todayProvider = StreamProvider<DayStats>(
 
 final recentSalesProvider = StreamProvider<List<Sale>>(
     (ref) => ref.watch(databaseProvider).watchRecentSales());
+
+/// Datos de los reportes: se recalculan solos al cambiar ventas o existencias.
+final reportDataProvider = StreamProvider<ReportData>(
+    (ref) => ref.watch(databaseProvider).watchReportData());
 
 /// Carrito: id de producto -> cantidad.
 class CartNotifier extends Notifier<Map<String, int>> {
