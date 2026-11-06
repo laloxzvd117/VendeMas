@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/format.dart';
+import '../../domain/reports.dart';
 import '../../providers.dart';
+import '../reports/report_texts.dart';
 
 /// F-02: resumen del día.
 class HomeScreen extends ConsumerWidget {
@@ -16,6 +18,8 @@ class HomeScreen extends ConsumerWidget {
     final name = ref.watch(businessNameProvider).value ?? '';
     final today = ref.watch(todayProvider).value;
     final recent = ref.watch(recentSalesProvider).value ?? const [];
+    final tips = recommendations(
+        ref.watch(reportDataProvider).value ?? ReportData.empty());
     final low = (ref.watch(productsProvider).value ?? const [])
         .where((p) => p.isLow || p.isOut)
         .toList();
@@ -73,6 +77,26 @@ class HomeScreen extends ConsumerWidget {
                 subtitle: Text(
                   low.take(3).map((p) => p.product.name).join(', '),
                   style: TextStyle(color: cs.onTertiaryContainer),
+                ),
+              ),
+            ),
+          ],
+          if (tips.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Para hoy',
+                        style: tt.titleSmall?.copyWith(color: cs.primary)),
+                    for (final t in tips)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Text(t),
+                      ),
+                  ],
                 ),
               ),
             ),
