@@ -34,7 +34,17 @@ final routerProvider = Provider<GoRouter>((ref) {
             GoRoute(path: '/products', builder: (_, _) => const ProductsScreen()),
           ]),
           StatefulShellBranch(routes: [
-            GoRoute(path: '/reports', builder: (_, _) => const ReportsScreen()),
+            GoRoute(
+              path: '/reports',
+              builder: (_, _) => const ReportsScreen(),
+              routes: [
+                GoRoute(
+                  path: ':key',
+                  builder: (_, state) =>
+                      ReportPage(reportKey: state.pathParameters['key'] ?? ''),
+                ),
+              ],
+            ),
           ]),
         ],
       ),
