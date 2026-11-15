@@ -3,11 +3,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'data/database.dart';
 import 'data/report_source.dart';
+import 'data/session.dart';
 import 'domain/calculations.dart';
 import 'domain/reports.dart';
 
+export 'data/session.dart' show prefsProvider, sessionProvider, Session;
+
+/// Cada cuenta tiene su propia base local, así los datos no se mezclan.
 final databaseProvider = Provider<AppDatabase>((ref) {
-  final db = AppDatabase(driftDatabase(name: 'vendemas'));
+  final s = ref.watch(sessionProvider);
+  if (s == null) throw StateError('No hay sesión abierta.');
+  final db = AppDatabase(driftDatabase(name: s.databaseName));
   ref.onDispose(db.close);
   return db;
 });
@@ -31,7 +37,10 @@ final reportDataProvider = StreamProvider<ReportData>(
 /// Carrito: id de producto -> cantidad.
 class CartNotifier extends Notifier<Map<String, int>> {
   @override
-  Map<String, int> build() => {};
+  Map<String, int> build() {
+    ref.watch(sessionProvider);
+    return {};
+  }
 
   /// Devuelve un mensaje si no se puede sumar (sin existencias suficientes).
   String? add(ProductView p) {
@@ -93,7 +102,10 @@ class LastSale {
 
 class LastSaleNotifier extends Notifier<LastSale?> {
   @override
-  LastSale? build() => null;
+  LastSale? build() {
+    ref.watch(sessionProvider);
+    return null;
+  }
   void set(LastSale s) => state = s;
 }
 
