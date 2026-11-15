@@ -1,30 +1,27 @@
-import 'dart:io' show Platform;
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import 'core/platform.dart';
 import 'core/theme.dart';
 import 'features/desktop/desktop_shell.dart';
+import 'features/login/login_screen.dart';
 import 'features/onboarding/onboarding_screen.dart';
 import 'providers.dart';
 import 'router.dart';
 
-/// Solo para pruebas: fuerza la vista de celular aunque corran en Linux.
-bool debugForceMobile = false;
+export 'core/platform.dart' show debugForceMobile, isDesktop;
 
-bool get isDesktop =>
-    !debugForceMobile &&
-    !kIsWeb &&
-    (Platform.isLinux || Platform.isWindows || Platform.isMacOS);
-
-    
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('es_MX');
-  runApp(const ProviderScope(child: VendeMasApp()));
+  final prefs = await SharedPreferences.getInstance();
+  runApp(ProviderScope(
+    overrides: [prefsProvider.overrideWithValue(prefs)],
+    child: const VendeMasApp(),
+  ));
 }
 
 class VendeMasApp extends ConsumerWidget {
@@ -37,50 +34,38 @@ class VendeMasApp extends ConsumerWidget {
     GlobalCupertinoLocalizations.delegate,
   ];
 
+  MaterialApp _app(Widget home, {String title = 'VendeMas'}) => MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: title,
+        theme: buildTheme(Brightness.light),
+        darkTheme: buildTheme(Brightness.dark),
+        locale: _locale,
+        supportedLocales: const [_locale],
+        localizationsDelegates: _delegates,
+        home: home,
+      );
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final name = ref.watch(businessNameProvider);
-    final light = buildTheme(Brightness.light);
-    final dark = buildTheme(Brightness.dark);
+    final session = ref.watch(sessionProvider);
+    if (session == null) return _app(const LoginScreen());
 
-    // Primer inicio: sin negocio solo se muestra la bienvenida (F-01).
-    if (name.isLoading) {
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: light,
-        darkTheme: dark,
-        home: const Scaffold(body: Center(child: CircularProgressIndicator())),
-      );
-    }
-    if (name.value == null) {
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'VendeMas',
-        theme: light,
-        darkTheme: dark,
-        locale: _locale,
-        supportedLocales: const [_locale],
-        localizationsDelegates: _delegates,
-        home: const OnboardingScreen(),
-      );
-    }
+    // La computadora solo consulta: el nombre llega del celular.
     if (isDesktop) {
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'VendeMas · Consulta de reportes',
-        theme: light,
-        darkTheme: dark,
-        locale: _locale,
-        supportedLocales: const [_locale],
-        localizationsDelegates: _delegates,
-        home: const DesktopShell(),
-      );
+      return _app(const DesktopShell(), title: 'VendeMas · Consulta de reportes');
     }
+
+    final name = ref.watch(businessNameProvider);
+    if (name.isLoading && !name.hasValue) {
+      return _app(const Scaffold(body: Center(child: CircularProgressIndicator())));
+    }
+    if (name.value == null) return _app(const OnboardingScreen());
+
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'VendeMas',
-      theme: light,
-      darkTheme: dark,
+      theme: buildTheme(Brightness.light),
+      darkTheme: buildTheme(Brightness.dark),
       locale: _locale,
       supportedLocales: const [_locale],
       localizationsDelegates: _delegates,
