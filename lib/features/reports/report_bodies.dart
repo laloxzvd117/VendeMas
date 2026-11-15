@@ -20,9 +20,6 @@ class SelectedWeek extends Notifier<int> {
 final selectedWeekProvider =
     NotifierProvider<SelectedWeek, int>(SelectedWeek.new);
 
-/// Para capturar el resumen semanal como imagen (RF-20).
-final weekCaptureKey = GlobalKey();
-
 class _Scope extends ConsumerWidget {
   const _Scope({required this.builder});
   final Widget Function(ReportData d) builder;
@@ -526,7 +523,6 @@ class _WeekView extends ConsumerWidget {
     return SingleChildScrollView(
       padding: _pad,
       child: RepaintBoundary(
-        key: weekCaptureKey,
         child: Container(
           color: Theme.of(context).scaffoldBackgroundColor,
           padding: const EdgeInsets.all(8),
