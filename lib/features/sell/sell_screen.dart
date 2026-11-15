@@ -42,7 +42,7 @@ class SellScreen extends ConsumerWidget {
                       gridDelegate:
                           const SliverGridDelegateWithMaxCrossAxisExtent(
                         maxCrossAxisExtent: 200,
-                        mainAxisExtent: 104,
+                        mainAxisExtent: 128,
                         mainAxisSpacing: 12,
                         crossAxisSpacing: 12,
                       ),
@@ -133,7 +133,7 @@ class _Tile extends ConsumerWidget {
                       child: Text(p.product.name,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: tt.titleMedium?.copyWith(color: fg)),
+                          style: tt.titleSmall?.copyWith(color: fg)),
                     ),
                     if (p.tracked)
                       Text(p.isOut ? 'Agotado' : 'Quedan ${p.stock}',
