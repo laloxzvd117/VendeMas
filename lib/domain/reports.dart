@@ -588,6 +588,35 @@ WeekSummary weekSummary(ReportData d, DateTime weekStart) {
   );
 }
 
+/// Productos vendidos en la semana que empieza en [weekStart], por ganancia.
+List<ProductStat> weekProducts(ReportData d, DateTime weekStart) {
+  final start = startOfDay(weekStart);
+  final end = addDays(start, 7);
+  final dates = _saleDates(d);
+  final names = {for (final p in d.products) p.id: p.name};
+  final units = <String, int>{};
+  final revenue = <String, int>{};
+  final profit = <String, int>{};
+  for (final i in d.items) {
+    final at = dates[i.saleId];
+    if (at == null || at.isBefore(start) || !at.isBefore(end)) continue;
+    if (!names.containsKey(i.productId)) continue;
+    units[i.productId] = (units[i.productId] ?? 0) + i.qty;
+    revenue[i.productId] = (revenue[i.productId] ?? 0) + i.revenue;
+    profit[i.productId] = (profit[i.productId] ?? 0) + i.profit;
+  }
+  return rankByProfit([
+    for (final id in units.keys)
+      ProductStat(
+        id: id,
+        name: names[id]!,
+        units: units[id]!,
+        revenue: revenue[id]!,
+        profit: profit[id]!,
+      ),
+  ]);
+}
+
 /// Las últimas [count] semanas, de la más antigua a la actual.
 List<WeekSummary> lastWeeks(ReportData d, {int count = 8}) {
   final thisWeek = weekStartOf(d.now);
@@ -606,4 +635,3 @@ String coverText({required int stock, required int unitsLast30}) {
   final r = days.round();
   return 'alcanza ~$r ${r == 1 ? 'día' : 'días'}';
 }
-
