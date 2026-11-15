@@ -8,17 +8,29 @@ import 'features/reports/reports_screen.dart';
 import 'features/sell/done_screen.dart';
 import 'features/sell/pay_screen.dart';
 import 'features/sell/sell_screen.dart';
+import 'features/settings/settings_screen.dart';
+import 'providers.dart';
 import 'shell.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
-  return GoRouter(
+  // Al cambiar de cuenta se vuelve a empezar desde el inicio.
+  ref.watch(sessionProvider);
+  final router = GoRouter(
     initialLocation: '/',
     routes: [
       StatefulShellRoute.indexedStack(
         builder: (context, state, shell) => AppShell(shell: shell),
         branches: [
           StatefulShellBranch(routes: [
-            GoRoute(path: '/', builder: (_, _) => const HomeScreen()),
+            GoRoute(
+              path: '/',
+              builder: (_, _) => const HomeScreen(),
+              routes: [
+                GoRoute(
+                    path: 'settings',
+                    builder: (_, _) => const SettingsScreen()),
+              ],
+            ),
           ]),
           StatefulShellBranch(routes: [
             GoRoute(
@@ -50,6 +62,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
     ],
   );
+  return router;
 });
 
 const tabs = [
